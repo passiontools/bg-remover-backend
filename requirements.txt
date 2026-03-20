@@ -1,7 +1,0 @@
-# AI Background Remover Dependencies
-fastapi
-uvicorn[standard]
-python-multipart
-rembg
-onnxruntime
-Pillow
