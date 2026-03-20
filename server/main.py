@@ -67,7 +67,7 @@ def get_session():
     global _session
     if _session is None:
         logger.info("Initializing rembg session with u2net model...")
-        _session = new_session("u2net")
+        _session = new_session("u2netp")  # Smaller model, uses less memory
         logger.info("rembg session initialized successfully")
     return _session
 
