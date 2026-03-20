@@ -24,13 +24,14 @@ _session = None
 remove_func = None
 
 def get_rembg_session():
-    """Lazy load rembg session"""
+    """Lazy load rembg session - only when first request comes in"""
     global _session, remove_func
     if _session is None:
         try:
             from rembg import remove, new_session
             logger.info("Loading rembg model...")
-            _session = new_session("u2net")
+            # u2netp is smaller (4MB vs 176MB) and fits in 512MB free tier RAM
+            _session = new_session("u2netp")
             remove_func = remove
             logger.info("rembg model loaded successfully")
         except ImportError:
@@ -42,7 +43,7 @@ def get_rembg_session():
 async def lifespan(app: FastAPI):
     """Lifespan context manager for startup/shutdown"""
     logger.info("Starting AI Background Remover service...")
-    get_rembg_session()
+    # Do NOT load model at startup - load lazily on first request to save RAM
     yield
     logger.info("Shutting down AI Background Remover service...")
 
@@ -152,5 +153,5 @@ async def remove_background(
 
 if __name__ == "__main__":
     import uvicorn
-    port = int(os.environ.get("PORT", 3002))
+    port = int(os.environ.get("PORT", 8000))
     uvicorn.run(app, host="0.0.0.0", port=port)
